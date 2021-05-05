@@ -8,7 +8,7 @@ Feel free to contribute to this repository by e.g. creating a Pull-Request.
 
 ## Contribution
 
-🛈 Please apply as a **Contributor** to this repository first.  
+🛈 Please apply as a **Contributor** to this repository first (e.g. by sending me a mail).  
 Use the following procedure to create a Pull-Request:
 
 1. Clone this repository

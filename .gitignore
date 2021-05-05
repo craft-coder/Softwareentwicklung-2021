@@ -1,3 +1,7 @@
+# Directories
+[Bb]uild/
+.vscode/
+
 # Prerequisites
 *.d
 
