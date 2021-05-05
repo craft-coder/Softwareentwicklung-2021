@@ -8,4 +8,22 @@ Vec3::Vec3() {
     z = 0.0;
 }
 
-} // namespace raytracer
+Vec3::Vec3(double x, double y, double z) {
+    this->x = x;
+    this->y = y;
+    this->z = z;
+}
+
+double Vec3::getX() const {
+    return x;
+}
+
+double Vec3::getY() const {
+    return y;
+}
+
+double Vec3::getZ() const {
+    return z;
+}
+
+}
