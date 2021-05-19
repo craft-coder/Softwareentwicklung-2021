@@ -1,0 +1,25 @@
+@startuml Raytracing Activity Example
+title Raytracing Activity Example
+
+start
+
+:Setup Image;
+
+repeat
+
+:Create ray from eye through pixel;
+
+if (Object was hit) then (yes)
+    :Determine Object Color;
+    :Calculate Pixel Color;
+else (no)
+    :Get Background Color;
+endif
+
+:Draw Pixel Color;
+
+repeat while (any pixels left?)
+
+stop
+
+@enduml
