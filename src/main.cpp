@@ -1,14 +1,47 @@
+#include "Color.h"
+#include "Ray.h"
+#include "Sphere.h"
 #include "Vec3.h"
 #include <iostream>
 #include <thread>
 
 using namespace raytracer;
 
+Color background(const Ray& ray) {
+    auto unitDirection = unitVector(ray.direction());
+    auto t = 0.5 * (unitDirection.y() + 1.0);
+    return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
+}
+
+Color rayColor(const Ray& ray, Hittable& hittable) {
+    HitRecord hitRecord;
+    
+    if (hittable.hit(ray, 0, 1000, hitRecord)) {
+        return 0.5 * (hitRecord.normal + Color(1, 1, 1));
+    }
+    
+    return background(ray);
+}
+
 int main() {
 
     // Image
-    const int imageWidth = 256;
-    const int imageHeigth = 256;
+    const auto aspectRation = 16.0 / 9.0;
+    const int imageWidth = 400;
+    const int imageHeigth = static_cast<int>(imageWidth / aspectRation);
+
+    // Hittable Objects in our scene
+    Sphere sphere(Point3(0, 0, -1), 0.5);
+
+    // Camera
+    auto viewportHeight = 2.0;
+    auto viewportWidth = aspectRation * viewportHeight;
+    auto focalLength = 1.0;
+
+    auto origin = Point3(0, 0, 0);
+    auto horizontal = Vec3(viewportWidth, 0, 0);
+    auto vertical = Vec3(0, viewportHeight, 0);
+    auto lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focalLength);
 
     // Render
     std::cerr << "Starting rendering" << std::endl;
@@ -16,19 +49,18 @@ int main() {
 
     for (int j = imageHeigth - 1; j >= 0; --j) {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-       
+
         for (int i = 0; i < imageWidth; ++i) {
-            
-            auto color = Color(double(i) / (imageWidth - 1), 1.0, 1.0);
-            
-            // Write the translated [0,255] value of each Color component.
-            auto red = static_cast<int>(255.999 * color.x());
-            auto green = static_cast<int>(255.999 * color.y());
-            auto blue = static_cast<int>(255.999 * color.z());
-            
-            std::cout << red << ' ' << green << ' ' << blue << '\n';
+
+            auto u = double(i) / (imageWidth - 1);
+            auto v = double(j) / (imageHeigth - 1);
+
+            auto direction = lowerLeftCorner + u * horizontal + v * vertical - origin;
+            auto ray = Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
+
+            auto Color = rayColor(ray, sphere);
+            writeColor(std::cout, Color);
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     std::cerr << "\nDone.\n";
