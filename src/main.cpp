@@ -1,15 +1,26 @@
 #include "Color.h"
-#include "Vec3.h"
 #include "Ray.h"
+#include "Sphere.h"
+#include "Vec3.h"
 #include <iostream>
 #include <thread>
 
 using namespace raytracer;
 
-Color rayColor(const Ray& ray) {
+Color background(const Ray& ray) {
     auto unitDirection = unitVector(ray.direction());
     auto t = 0.5 * (unitDirection.y() + 1.0);
     return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
+}
+
+Color rayColor(const Ray& ray, Hittable& hittable) {
+    HitRecord hitRecord;
+    
+    if (hittable.hit(ray, 0, 1000, hitRecord)) {
+        return 0.5 * (hitRecord.normal + Color(1, 1, 1));
+    }
+    
+    return background(ray);
 }
 
 int main() {
@@ -18,6 +29,9 @@ int main() {
     const auto aspectRation = 16.0 / 9.0;
     const int imageWidth = 400;
     const int imageHeigth = static_cast<int>(imageWidth / aspectRation);
+
+    // Hittable Objects in our scene
+    Sphere sphere(Point3(0, 0, -1), 0.5);
 
     // Camera
     auto viewportHeight = 2.0;
@@ -44,7 +58,7 @@ int main() {
             auto direction = lowerLeftCorner + u * horizontal + v * vertical - origin;
             auto ray = Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
 
-            auto Color = rayColor(ray);
+            auto Color = rayColor(ray, sphere);
             writeColor(std::cout, Color);
         }
     }
