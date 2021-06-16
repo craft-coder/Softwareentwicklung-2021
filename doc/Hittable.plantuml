@@ -1,0 +1,14 @@
+abstract Hittable {
+    {abstract} bool hit(...)
+}
+
+class Sphere {
+    bool hit(...)
+}
+
+class Cube {
+    bool hit(...)
+}
+
+Hittable <|-- Sphere
+Hittable <|-- Cube
