@@ -56,10 +56,10 @@ int main() {
             auto v = double(j) / (imageHeigth - 1);
 
             auto direction = lowerLeftCorner + u * horizontal + v * vertical - origin;
-            auto ray = Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
+            auto ray = Ray(origin, direction);
 
-            auto Color = rayColor(ray, sphere);
-            writeColor(std::cout, Color);
+            auto color = rayColor(ray, sphere);
+            writeColor(std::cout, color);
         }
     }
 
