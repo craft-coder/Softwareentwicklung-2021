@@ -36,6 +36,9 @@ int main() {
     
     auto sphere = std::make_shared<Sphere>(Point3(0, 0, -1), 0.5);
     sceneObjects.add(sphere);
+    
+    auto floor = std::make_shared<Sphere>(Point3(0,-100.5,-1), 100);
+    sceneObjects.add(floor);
 
     // Camera
     auto viewportHeight = 2.0;
