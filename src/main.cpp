@@ -2,6 +2,7 @@
 #include "Ray.h"
 #include "Sphere.h"
 #include "Vec3.h"
+#include "Hittables.h"
 #include <iostream>
 #include <thread>
 
@@ -31,7 +32,10 @@ int main() {
     const int imageHeigth = static_cast<int>(imageWidth / aspectRation);
 
     // Hittable Objects in our scene
-    Sphere sphere(Point3(0, 0, -1), 0.5);
+    Hittables sceneObjects;
+    
+    auto sphere = std::make_shared<Sphere>(Point3(0, 0, -1), 0.5);
+    sceneObjects.add(sphere);
 
     // Camera
     auto viewportHeight = 2.0;
@@ -58,7 +62,7 @@ int main() {
             auto direction = lowerLeftCorner + u * horizontal + v * vertical - origin;
             auto ray = Ray(origin, direction);
 
-            auto color = rayColor(ray, sphere);
+            auto color = rayColor(ray, sceneObjects);
             writeColor(std::cout, color);
         }
     }
