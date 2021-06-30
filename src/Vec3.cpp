@@ -1,4 +1,5 @@
 #include "Vec3.h"
+#include "Random.h"
 #include <cmath>
 #include <stdexcept>
 
@@ -81,6 +82,14 @@ double Vec3::length() const {
 
 double Vec3::lengthSquared() const {
     return x_ * x_ + y_ * y_ + z_ * z_;
+}
+
+Vec3 Vec3::random() {
+    return Vec3(randomDouble(), randomDouble(), randomDouble());
+}
+
+Vec3 Vec3::random(double min, double max) {
+    return Vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
 }
 
 // Vec3 Utility Functions
