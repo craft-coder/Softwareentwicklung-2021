@@ -22,6 +22,9 @@ class Vec3 {
     double length() const;
     double lengthSquared() const;
 
+    static Vec3 random();
+    static Vec3 random(double min, double max);
+
   private:
     double x_, y_, z_;
 };

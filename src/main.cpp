@@ -1,12 +1,22 @@
+#include "Camera.h"
 #include "Color.h"
+#include "Hittables.h"
+#include "Random.h"
 #include "Ray.h"
 #include "Sphere.h"
 #include "Vec3.h"
-#include "Hittables.h"
 #include <iostream>
 #include <thread>
 
 using namespace raytracer;
+
+Vec3 randomInUnitSphere() {
+    while (true) {
+        auto p = Vec3::random(-1, 1);
+        if (p.lengthSquared() >= 1) continue;
+        return p;
+    }
+}
 
 Color background(const Ray& ray) {
     auto unitDirection = unitVector(ray.direction());
@@ -14,41 +24,44 @@ Color background(const Ray& ray) {
     return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
 }
 
-Color rayColor(const Ray& ray, Hittable& hittable) {
+Color rayColor(const Ray& ray, Hittable& hittable, int depth) {
     HitRecord hitRecord;
-    
-    if (hittable.hit(ray, 0, 1000, hitRecord)) {
-        return 0.5 * (hitRecord.normal + Color(1, 1, 1));
+
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if (depth <= 0) {
+        return Color(0, 0, 0);
     }
-    
+
+    if (hittable.hit(ray, 0.001, 1000, hitRecord)) {
+        auto target = hitRecord.point + hitRecord.normal + randomInUnitSphere();
+        auto direction = target - hitRecord.point;
+        auto ray = Ray(hitRecord.point, direction);
+        return 0.5 * rayColor(ray, hittable, depth - 1);
+    }
+
     return background(ray);
 }
 
 int main() {
 
     // Image
-    const auto aspectRation = 16.0 / 9.0;
+    const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 400;
-    const int imageHeigth = static_cast<int>(imageWidth / aspectRation);
+    const int imageHeigth = static_cast<int>(imageWidth / aspectRatio);
+    const int samplesPerPixel = 100;
+    const int maxDepth = 50;
 
     // Hittable Objects in our scene
     Hittables sceneObjects;
-    
+
     auto sphere = std::make_shared<Sphere>(Point3(0, 0, -1), 0.5);
     sceneObjects.add(sphere);
-    
-    auto floor = std::make_shared<Sphere>(Point3(0,-100.5,-1), 100);
+
+    auto floor = std::make_shared<Sphere>(Point3(0, -100.5, -1), 100);
     sceneObjects.add(floor);
 
     // Camera
-    auto viewportHeight = 2.0;
-    auto viewportWidth = aspectRation * viewportHeight;
-    auto focalLength = 1.0;
-
-    auto origin = Point3(0, 0, 0);
-    auto horizontal = Vec3(viewportWidth, 0, 0);
-    auto vertical = Vec3(0, viewportHeight, 0);
-    auto lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focalLength);
+    Camera camera;
 
     // Render
     std::cerr << "Starting rendering" << std::endl;
@@ -59,14 +72,15 @@ int main() {
 
         for (int i = 0; i < imageWidth; ++i) {
 
-            auto u = double(i) / (imageWidth - 1);
-            auto v = double(j) / (imageHeigth - 1);
+            Color pixelColor(0, 0, 0);
+            for (auto sample = 0; sample < samplesPerPixel; sample++) {
+                auto u = (i + randomDouble()) / (imageWidth - 1);
+                auto v = (j + randomDouble()) / (imageHeigth - 1);
+                auto ray = camera.getRay(u, v);
 
-            auto direction = lowerLeftCorner + u * horizontal + v * vertical - origin;
-            auto ray = Ray(origin, direction);
-
-            auto color = rayColor(ray, sceneObjects);
-            writeColor(std::cout, color);
+                pixelColor += rayColor(ray, sceneObjects, maxDepth);
+            }
+            writeColor(std::cout, pixelColor, samplesPerPixel);
         }
     }
 
