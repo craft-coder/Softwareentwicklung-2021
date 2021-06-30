@@ -1,5 +1,6 @@
 #include "Color.h"
 #include <algorithm>
+#include <cmath>
 
 namespace raytracer {
 
@@ -8,11 +9,11 @@ void writeColor(std::ostream& out, Color color, int samplesPerPixel) {
     auto g = color.y();
     auto b = color.z();
 
-    // Divide the color by the number of samples.
+    // Divide the color by the number of samples and gamma-correct for gamma=2.0.
     auto scale = 1.0 / samplesPerPixel;
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r = std::sqrt(scale * r);
+    g = std::sqrt(scale * g);
+    b = std::sqrt(scale * b);
 
     // Write the translated [0,255] value of each color component.
     auto red = static_cast<int>(255.999 * std::clamp(r, 0.0, 0.999));

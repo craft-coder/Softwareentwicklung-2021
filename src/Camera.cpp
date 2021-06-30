@@ -3,9 +3,9 @@
 namespace raytracer {
 
 Camera::Camera() {
-    const auto aspectRation = 16.0 / 9.0;
+    const auto aspectRatio = 16.0 / 9.0;
     auto viewportHeight = 2.0;
-    auto viewportWidth = aspectRation * viewportHeight;
+    auto viewportWidth = aspectRatio * viewportHeight;
     auto focalLength = 1.0;
 
     origin_ = Point3(0, 0, 0);

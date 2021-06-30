@@ -45,9 +45,9 @@ Color rayColor(const Ray& ray, Hittable& hittable, int depth) {
 int main() {
 
     // Image
-    const auto aspectRation = 16.0 / 9.0;
+    const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 400;
-    const int imageHeigth = static_cast<int>(imageWidth / aspectRation);
+    const int imageHeigth = static_cast<int>(imageWidth / aspectRatio);
     const int samplesPerPixel = 100;
     const int maxDepth = 50;
 
