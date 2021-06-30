@@ -4,6 +4,6 @@
 
 namespace raytracer {
 
-void writeColor(std::ostream& out, Color color);
+void writeColor(std::ostream& out, Color color, int samplesPerPixel);
 
 } // namespace raytracer

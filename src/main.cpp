@@ -1,5 +1,7 @@
+#include "Camera.h"
 #include "Color.h"
 #include "Hittables.h"
+#include "Random.h"
 #include "Ray.h"
 #include "Sphere.h"
 #include "Vec3.h"
@@ -46,6 +48,7 @@ int main() {
     const auto aspectRation = 16.0 / 9.0;
     const int imageWidth = 400;
     const int imageHeigth = static_cast<int>(imageWidth / aspectRation);
+    const int samplesPerPixel = 100;
     const int maxDepth = 50;
 
     // Hittable Objects in our scene
@@ -58,14 +61,7 @@ int main() {
     sceneObjects.add(floor);
 
     // Camera
-    auto viewportHeight = 2.0;
-    auto viewportWidth = aspectRation * viewportHeight;
-    auto focalLength = 1.0;
-
-    auto origin = Point3(0, 0, 0);
-    auto horizontal = Vec3(viewportWidth, 0, 0);
-    auto vertical = Vec3(0, viewportHeight, 0);
-    auto lowerLeftCorner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focalLength);
+    Camera camera;
 
     // Render
     std::cerr << "Starting rendering" << std::endl;
@@ -76,14 +72,15 @@ int main() {
 
         for (int i = 0; i < imageWidth; ++i) {
 
-            auto u = double(i) / (imageWidth - 1);
-            auto v = double(j) / (imageHeigth - 1);
+            Color pixelColor(0, 0, 0);
+            for (auto sample = 0; sample < samplesPerPixel; sample++) {
+                auto u = (i + randomDouble()) / (imageWidth - 1);
+                auto v = (j + randomDouble()) / (imageHeigth - 1);
+                auto ray = camera.getRay(u, v);
 
-            auto direction = lowerLeftCorner + u * horizontal + v * vertical - origin;
-            auto ray = Ray(origin, direction);
-
-            auto color = rayColor(ray, sceneObjects, maxDepth);
-            writeColor(std::cout, color);
+                pixelColor += rayColor(ray, sceneObjects, maxDepth);
+            }
+            writeColor(std::cout, pixelColor, samplesPerPixel);
         }
     }
 
