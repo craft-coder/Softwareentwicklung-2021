@@ -32,7 +32,7 @@ Color rayColor(const Ray& ray, Hittable& hittable, int depth) {
         return Color(0, 0, 0);
     }
 
-    if (hittable.hit(ray, 0, 1000, hitRecord)) {
+    if (hittable.hit(ray, 0.001, 1000, hitRecord)) {
         auto target = hitRecord.point + hitRecord.normal + randomInUnitSphere();
         auto direction = target - hitRecord.point;
         auto ray = Ray(hitRecord.point, direction);
