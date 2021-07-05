@@ -19,3 +19,7 @@ Use the following procedure to create a Pull-Request:
 1. Create a Pull-Request to get the changes back into the `develop` branch.
 
 👍 Great, you've just created a Pull-Request.
+
+## Acknowledgment
+
+The example content of this repository is based on the *Ray Tracing in One Weekend* article and its code https://raytracing.github.io/.
