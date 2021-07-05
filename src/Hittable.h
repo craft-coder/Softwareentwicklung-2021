@@ -1,13 +1,17 @@
 #pragma once
-#include "Vec3.h"
 #include "Ray.h"
+#include "Vec3.h"
+#include <memory>
 
 namespace raytracer {
+
+class Material; // Forward declaration
 
 struct HitRecord {
     Point3 point;
     Vec3 normal;
     double distance;
+    std::shared_ptr<Material> material;
 };
 
 class Hittable {

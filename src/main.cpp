@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Color.h"
 #include "Hittables.h"
+#include "Lambertian.h"
 #include "Random.h"
 #include "Ray.h"
 #include "Sphere.h"
@@ -33,10 +34,21 @@ Color rayColor(const Ray& ray, Hittable& hittable, int depth) {
     }
 
     if (hittable.hit(ray, 0.001, 1000, hitRecord)) {
-        auto target = hitRecord.point + hitRecord.normal + randomInUnitSphere();
-        auto direction = target - hitRecord.point;
-        auto ray = Ray(hitRecord.point, direction);
-        return 0.5 * rayColor(ray, hittable, depth - 1);
+        
+        if (!hitRecord.material) {
+            return Color(0, 0, 0);
+        }
+
+        Ray scattered;
+        Color attenuation;
+        
+        auto isScattering = hitRecord.material->scatter(ray, hitRecord, attenuation, scattered);
+        
+        if (!isScattering) {
+            return Color(0, 0, 0);
+        }
+
+        return attenuation * rayColor(scattered, hittable, depth - 1);
     }
 
     return background(ray);
@@ -51,13 +63,23 @@ int main() {
     const int samplesPerPixel = 100;
     const int maxDepth = 50;
 
+    // Materials
+    auto red = std::make_shared<Lambertian>(Color(0.9, 0.1, 0.1));
+    auto yellow = std::make_shared<Lambertian>(Color(0.9, 0.9, 0.1));
+    auto blue = std::make_shared<Lambertian>(Color(0.0, 0.0, 0.9));
+    auto materialFloor = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
+
     // Hittable Objects in our scene
     Hittables sceneObjects;
 
-    auto sphere = std::make_shared<Sphere>(Point3(0, 0, -1), 0.5);
-    sceneObjects.add(sphere);
+    auto redSphere = std::make_shared<Sphere>(Point3(0, 0, -1), 0.5, red);
+    auto yellowSphere = std::make_shared<Sphere>(Point3(1, 0, -1), 0.5, yellow);
+    auto blueSphere = std::make_shared<Sphere>(Point3(-1, 0, -1), 0.5, blue);
+    sceneObjects.add(redSphere);
+    sceneObjects.add(yellowSphere);
+    sceneObjects.add(blueSphere);
 
-    auto floor = std::make_shared<Sphere>(Point3(0, -100.5, -1), 100);
+    auto floor = std::make_shared<Sphere>(Point3(0, -100.5, -1), 100, materialFloor);
     sceneObjects.add(floor);
 
     // Camera

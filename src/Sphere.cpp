@@ -3,9 +3,10 @@
 
 namespace raytracer {
 
-Sphere::Sphere(Point3 center, double radius)
+Sphere::Sphere(Point3 center, double radius, std::shared_ptr<Material> material)
     : center_(center)
-    , radius_(radius) {
+    , radius_(radius)
+    , material_(material) {
 }
 
 bool Sphere::hit(const Ray& ray, double tMin, double tMax, HitRecord& hitRecord) const {
@@ -28,6 +29,7 @@ bool Sphere::hit(const Ray& ray, double tMin, double tMax, HitRecord& hitRecord)
     hitRecord.distance = root;
     hitRecord.point = ray.at(hitRecord.distance);
     hitRecord.normal = (hitRecord.point - center_) / radius_;
+    hitRecord.material = material_;
 
     return true;
 }

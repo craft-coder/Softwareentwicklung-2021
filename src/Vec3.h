@@ -22,6 +22,9 @@ class Vec3 {
     double length() const;
     double lengthSquared() const;
 
+    // Return true if the vector is close to zero in all dimensions.
+    bool isNearZero() const;
+
     static Vec3 random();
     static Vec3 random(double min, double max);
 
@@ -44,5 +47,7 @@ Vec3 operator/(Vec3 v, double t);
 double dot(const Vec3& u, const Vec3& v);
 Vec3 cross(const Vec3& u, const Vec3& v);
 Vec3 unitVector(Vec3 v);
+Vec3 randomInUnitSphere();
+Vec3 randomUnitVector();
 
 } // namespace raytracer
