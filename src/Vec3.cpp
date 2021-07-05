@@ -84,12 +84,29 @@ double Vec3::lengthSquared() const {
     return x_ * x_ + y_ * y_ + z_ * z_;
 }
 
+bool Vec3::isNearZero() const {
+    const auto s = 1e-8;
+    return (fabs(x_) < s) && (fabs(y_) < s) && (fabs(z_) < s);
+}
+
 Vec3 Vec3::random() {
     return Vec3(randomDouble(), randomDouble(), randomDouble());
 }
 
 Vec3 Vec3::random(double min, double max) {
     return Vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+}
+
+Vec3 randomInUnitSphere() {
+    while (true) {
+        auto p = Vec3::random(-1, 1);
+        if (p.lengthSquared() >= 1) continue;
+        return p;
+    }
+}
+
+Vec3 randomUnitVector() {
+    return unitVector(randomInUnitSphere());
 }
 
 // Vec3 Utility Functions
