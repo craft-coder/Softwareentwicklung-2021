@@ -61,7 +61,10 @@ int main() {
     sceneObjects.add(floor);
 
     // Camera
-    Camera camera;
+    auto lookFrom = Point3(-1, 1, 1);
+    auto lookAt = Point3(0, 0, -1);
+    auto viewUp = Vec3(0, 1, 0);
+    Camera camera(lookFrom, lookAt, viewUp, Degree(40), aspectRatio);
 
     // Render
     std::cerr << "Starting rendering" << std::endl;
