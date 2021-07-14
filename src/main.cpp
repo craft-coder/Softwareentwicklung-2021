@@ -2,6 +2,7 @@
 #include "Color.h"
 #include "Hittables.h"
 #include "Lambertian.h"
+#include "Metal.h"
 #include "Random.h"
 #include "Ray.h"
 #include "Sphere.h"
@@ -67,17 +68,20 @@ int main() {
     auto red = std::make_shared<Lambertian>(Color(0.9, 0.1, 0.1));
     auto yellow = std::make_shared<Lambertian>(Color(0.9, 0.9, 0.1));
     auto blue = std::make_shared<Lambertian>(Color(0.0, 0.0, 0.9));
+    auto metal = std::make_shared<Metal>(Color(0.8, 0.8, 0.8));
     auto materialFloor = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
 
     // Hittable Objects in our scene
     Hittables sceneObjects;
 
     auto redSphere = std::make_shared<Sphere>(Point3(0, 0, -1), 0.5, red);
-    auto yellowSphere = std::make_shared<Sphere>(Point3(1, 0, -1), 0.5, yellow);
-    auto blueSphere = std::make_shared<Sphere>(Point3(-1, 0, -1), 0.5, blue);
+    auto yellowSphere = std::make_shared<Sphere>(Point3(1, 0, -1.5), 0.5, yellow);
+    auto blueSphere = std::make_shared<Sphere>(Point3(-1, 0, -2), 0.5, blue);
+    auto metalSphere = std::make_shared<Sphere>(Point3(2, 0, -1), 0.5, metal);
     sceneObjects.add(redSphere);
     sceneObjects.add(yellowSphere);
     sceneObjects.add(blueSphere);
+    sceneObjects.add(metalSphere);
 
     auto floor = std::make_shared<Sphere>(Point3(0, -100.5, -1), 100, materialFloor);
     sceneObjects.add(floor);
